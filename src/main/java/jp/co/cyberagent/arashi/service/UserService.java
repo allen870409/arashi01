@@ -2,15 +2,15 @@ package jp.co.cyberagent.arashi.service;
 
 import java.util.List;
 
-import jp.co.cyberagent.arashi.model.User;
+import jp.co.cyberagent.arashi.dto.UserDto;
 
 public interface UserService {
 	
-	 public List<User> findAllUsers();
+	 public List<UserDto> findAllUsers();
 	 
-	 public User get(int id);
+	 public UserDto get(int id);
 	 
-	 public void set(User user);
+	 public void set(UserDto user);
 
-	public User createUser(String name, int age, int sex);
+	public void createUser(String name, int age, int sex);
 }

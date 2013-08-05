@@ -2,6 +2,7 @@ package jp.co.cyberagent.arashi.controller;
 
 import java.util.List;
 
+import jp.co.cyberagent.arashi.dto.UserDto;
 import jp.co.cyberagent.arashi.model.User;
 import jp.co.cyberagent.arashi.service.UserService;
 
@@ -21,17 +22,17 @@ public class UserController {
 		this.userService = userService;
 	}
 	
-	@RequestMapping(value = "/login/{name}/{age}/{sex}", method = RequestMethod.GET)
+	@RequestMapping(value = "/create/{name}/{age}/{sex}", method = RequestMethod.GET)
 	@ResponseBody
-	public User createUser(@PathVariable String name,@PathVariable int age,@PathVariable int sex){
+	public void createUser(@PathVariable String name,@PathVariable int age,@PathVariable int sex){
 		
-		return userService.createUser(name, age,sex);
+		userService.createUser(name, age,sex);
 		
 	}
 	
 	@RequestMapping(value = "/listuser", method = RequestMethod.GET)
 	@ResponseBody
-	public List<User> listUser(){
+	public List<UserDto> listUser(){
 		
 		return userService.findAllUsers();
 		
