@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:tx="http://www.springframework.org/schema/tx" 
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc"  
+    xmlns:p="http://www.springframework.org/schema/p"  
+	xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+	    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+	    http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring  
+	    http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd
+	    http://www.springframework.org/schema/context       
+	    http://www.springframework.org/schema/context/spring-context-3.0.xsd       
+	    http://www.springframework.org/schema/tx       
+	    http://www.springframework.org/schema/tx/spring-tx-3.0.xsd       
+	    http://www.springframework.org/schema/jdbc       
+	    http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd"  
+	    default-autowire="byName" default-lazy-init="true" >
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	 <context:component-scan base-package="jp.co.cyberagent.arashi" />  
+	<bean id="dataSource" destroy-method="close"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />  
+        <property name="jdbcUrl" value="jdbc:mysql://ec2-54-249-28-203.ap-northeast-1.compute.amazonaws.com:3306/maple" />  
+        <property name="user" value="root" />  
+        <property name="password" value="root" />  
+    </bean>
+    <ehcache:annotation-driven cache-manager="ehCacheManager" />  
+    <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">  
+        <property name="configLocation" value="/WEB-INF/ehcache.xml" />  
+    </bean> 
+    
+     <bean id="sessionFactory"  
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">  
+        <property name="dataSource">  
+            <ref bean="dataSource" />  
+        </property>  
+       <property name="hibernateProperties">
+          <props>  
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>  
+                <prop key="hibernate.show_sql">false</prop>  
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>  
+                <prop key="hibernate.cache.use_query_cache">false</prop>  
+                <prop key="hibernate.jdbc.batch_size">50</prop>  
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>  
+             <prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+            </props>  
+        </property>
+                <!-- 自动扫描指定位置下的实体文件进行映射 -->  
+        <property name="packagesToScan" value="jp.co.cyberagent.arashi.*" />  
+    </bean>  
+   	<bean id="transactionManager"  
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager">  
+        <property name="sessionFactory">  
+            <ref local="sessionFactory" />  
+        </property>  
+    </bean>  
+    <tx:annotation-driven transaction-manager="transactionManager" />  
+      
+</beans>

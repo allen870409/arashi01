@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+	<!-- コンソール出力 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+	 <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+	      <level>DEBUG</level>
+	    </filter>
+	    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">      
+	      <evaluator> 
+	        <expression>return !(logger=="p6spy");</expression>
+	      </evaluator>
+	      <OnMismatch>DENY </OnMismatch>
+	      <OnMatch>NEUTRAL</OnMatch>
+	 </filter>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%date{yyyy/MM/dd HH:mm:ss.SSS} [%-5level] [%logger{30}] %message%n</Pattern>
+		</encoder>
+		
+	</appender>
+
+	<!-- Patriotログ出力 -->
+	<appender name="PATRIOT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%message%n</Pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+		<file>/var/log/tomcat7/seattleLog.log</file>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+	      <level>INFO</level>
+	    </filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>/var/log/tomcat7/seattleLog-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 100MB -->
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy/MM/dd HH:mm:ss.SSS} [%-5level] %logger{36} [%file : %line] %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="ROLLINGDB" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+		<file>/var/log/tomcat7/seattleDBLog.log</file>
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">      
+	      <evaluator> 
+	        <expression>return (!message.contains("select"))&amp;&amp;logger=="p6spy";</expression>
+	      </evaluator>
+	      <OnMismatch>DENY </OnMismatch>
+	      <OnMatch>NEUTRAL</OnMatch>
+	 </filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>/var/log/tomcat7/seattleDBLog-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxHistory>10</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 100MB -->
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy/MM/dd HH:mm:ss.SSS} [%-5level] %logger{36} %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- 文件输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份)-->
+    <appender name="SEATTLEWARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+       <filter class="ch.qos.logback.classic.filter.LevelFilter">
+
+		<level>ERROR</level> <!-- 指定要对级别为ERROR日志信息过滤 -->
+		
+		<OnMismatch>DENY</OnMismatch>     <!-- 如果不匹配，则拒绝处理 -->
+		
+		<OnMatch>ACCEPT</OnMatch>         <!-- 如果匹配，则立即处理 -->
+		
+		</filter>
+        <File>/var/log/tomcat7/SEATTLE_ERROR.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${log.base}.%d{yyyy-MM}.log.zip</FileNamePattern>
+        </rollingPolicy>
+          <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>2MB</MaxFileSize>
+        </triggeringPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date{yyyy/MM/dd HH:mm:ss.SSS} [%-5level] %logger{36} [%file : %line] %msg%n</pattern>
+        </layout>
+    </appender>
+	
+	<root>
+		<level value="TRACE" />
+		<appender-ref ref="ROLLING" />
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="SEATTLEWARN" />
+		<appender-ref ref="ROLLINGDB" />
+	</root>
+	<logger name="PATRIOT" additivity="false">
+		<level value="info" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	
+	<logger name="jp.co.cyberagent.seattle">
+		<level value="trace" />
+	</logger>
+
+	<!-- 実行されたSQL, 取得したデータを表示する場合はDEBUG -->
+	<logger name="jp.co.cyberagent.seattle.dao.impl">
+		<level value="debug" />
+	</logger>
+	<logger name="jp.co.cyberagent.seattle.service.impl">
+		<level value="debug" />
+	</logger>
+	<logger name="jp.co.cyberagent.seattle.web">
+		<level value="debug" />
+	</logger>
+	<!-- INFOレベルで不要なログ出力が行われるライブラリのログ出力除外設定 -->
+	<logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+		<level value="warn" />
+	</logger>
+	<logger name="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<level value="warn" />
+	</logger>
+	<logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory">
+		<level value="warn" />
+	</logger>
+	<logger name="org.springframework.context.annotation.ClassPathBeanDefinitionScanner">
+		<level value="warn" />
+	</logger>
+	<logger name="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor">
+		<level value="warn" />
+	</logger>
+	<logger name="org.quartz.core.QuartzScheduler">
+		<level value="warn" />
+	</logger>
+	<logger name="org.hibernate.validator.util.Version">
+		<level value="warn" />
+	</logger>
+	<logger name="org.hibernate" level="WARN" />  
+    <logger name="org.springframework" level="WARN" />  
+    <logger name="com.opensymphony" level="WARN" />  
+    <logger name="org.apache" level="WARN" />  
+  
+    <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->  
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder"  
+        level="TRACE" />  
+    <logger name="org.hibernate.type.descriptor.sql.BasicExtractor"  
+        level="TRACE" />  
+    <logger name="org.hibernate.SQL" level="TRACE" /> 
+    <logger name="org.hibernate.engine.QueryParameters" level="TRACE" />  
+    <logger name="org.hibernate.engine.query.HQLQueryPlan" level="TRACE" />  
+  
+</configuration>  
