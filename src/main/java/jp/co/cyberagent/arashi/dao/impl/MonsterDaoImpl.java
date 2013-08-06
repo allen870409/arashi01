@@ -125,7 +125,6 @@ public class MonsterDaoImpl implements MonsterDao {
      */
 	@Override
     public String ping(){
-		this.getJedis().
         return this.getJedis().ping();
     }
 	
