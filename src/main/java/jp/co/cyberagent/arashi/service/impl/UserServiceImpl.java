@@ -1,10 +1,9 @@
 package jp.co.cyberagent.arashi.service.impl;
 
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.List;
 
 import jp.co.cyberagent.arashi.dao.UserDao;
-import jp.co.cyberagent.arashi.dto.UserDto;
 import jp.co.cyberagent.arashi.model.User;
 import jp.co.cyberagent.arashi.service.UserService;
 
@@ -13,43 +12,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
 	@Autowired 
 	UserDao userDao;
 	@Override
-	@Transactional
-	public List<UserDto> findAllUsers() {
-		List<UserDto> list = new LinkedList<UserDto>();
-		UserDto dto= new UserDto();
-		List<User> users = userDao.findAllUsers();  
-		for(User u:users){
-			dto.setName(u.getName());
-			dto.setAge(u.getAge());
-			dto.setId(u.getId());
-			dto.setSex(u.getSex());
-			list.add(dto);
-		}
-		return list;
+	
+	public List<User> findAllUsers() {
+		return userDao.findAllUsers();  
 	}
 	@Override
-	public UserDto get(int id) {
+	public User get(int id) {
 		// TODO Auto-generated method stub
-		UserDto dto= new UserDto();
-		User u = userDao.get(id);
-		dto.setName(u.getName());
-		dto.setAge(u.getAge());
-		dto.setId(u.getId());
-		dto.setSex(u.getSex());
-		return dto;
+		Long date1 = new Date().getTime();
+		User user = userDao.get(id);
+		Long time = new Date().getTime()-date1;
+		System.out.println(time);
+		return user;
 	}
 	@Override
-	public void set(UserDto user) {
-		User u = new User();
-		u.setAge(user.getAge());
-		u.setName(user.getName());
-		u.setSex(user.getSex());
-		userDao.save(u);
+	public void set(User user) {
+		userDao.save(user);
 	}
 	@Override
 	public void createUser(String name, int age, int sex) {
@@ -58,6 +42,13 @@ public class UserServiceImpl implements UserService {
 		user.setAge(age);
 		user.setSex(sex);
 		userDao.save(user);
+	}
+	@Override
+	public void update(int id, String name, int age, int sex) {
+		User user = userDao.get(id);
+		user.setName(name);
+		user.setAge(age);
+		user.setSex(sex);
 	}
 
 	

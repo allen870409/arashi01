@@ -11,4 +11,6 @@ public interface UserDao {
 	public User get(Integer id);
 	
 	public void save(User user);
+
+	void update(User user);
 }

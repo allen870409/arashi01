@@ -1,5 +1,7 @@
 package jp.co.cyberagent.arashi.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,8 +11,13 @@ import javax.persistence.Table;
 
 @Entity  
 @Table(name = "user", catalog = "maple")  
-public class User {  
-    private Integer id;  
+public class User implements Serializable{  
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 492380227374620485L;
+	
+	private Integer id;  
     private String name;  
     private Integer age; 
     private Integer sex;
