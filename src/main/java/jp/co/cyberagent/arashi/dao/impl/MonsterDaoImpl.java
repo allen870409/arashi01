@@ -4,6 +4,8 @@ import java.util.Set;
 
 import jp.co.cyberagent.arashi.dao.MonsterDao;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -13,6 +15,10 @@ import redis.clients.jedis.Jedis;
 
 @Repository  
 public class MonsterDaoImpl implements MonsterDao {  
+	
+
+	/** SLF４J　の　Logger **/
+	private Logger log = LoggerFactory.getLogger(this.getClass());
 	@Override
 	public void del(byte [] key){
         this.getJedis().del(key);
@@ -125,6 +131,7 @@ public class MonsterDaoImpl implements MonsterDao {
      */
 	@Override
     public String ping(){
+		log.debug("sssss");
         return this.getJedis().ping();
     }
 	

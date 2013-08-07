@@ -24,7 +24,7 @@ public class UserController {
 	@RequestMapping(value = "/create/{name}/{age}/{sex}", method = RequestMethod.GET)
 	@ResponseBody
 	public void createUser(@PathVariable String name,@PathVariable int age,@PathVariable int sex){
-		
+		System.out.println(name);
 		userService.createUser(name, age,sex);
 		
 	}

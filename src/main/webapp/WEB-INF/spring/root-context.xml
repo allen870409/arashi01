@@ -19,9 +19,10 @@
 	default-autowire="byName" default-lazy-init="true">
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<context:component-scan base-package="jp.co.cyberagent.arashi" >
-		 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />  
-	</context:component-scan>   
+	<context:component-scan base-package="jp.co.cyberagent.arashi">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
 	<bean id="dataSource" destroy-method="close"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
@@ -45,8 +46,8 @@
 				<prop key="hibernate.jdbc.batch_size">50</prop>
 				<prop key="hibernate.cache.use_second_level_cache">false</prop>
 				<prop key="hibernate.current_session_context_class">thread</prop>
-				 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory  
-                </prop>  
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+				</prop>
 				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext
 				</prop>
 			</props>
@@ -58,13 +59,22 @@
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-	<cache:annotation-driven />  
-		<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache"/>  
-		<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"   
-        p:configLocation="classpath:ehcache.xml"/>  
+	<cache:annotation-driven />
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"
+		p:cache-manager-ref="ehcache" />
+	<bean id="ehcache"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+		p:configLocation="classpath:ehcache.xml" />
 	<tx:annotation-driven transaction-manager="transactionManager" />
-	
-	<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-    p:host-name="ec2-54-250-162-34.ap-northeast-1.compute.amazonaws.com" p:port="6379" />
 
+	<bean id="jedisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:host-name="ec2-54-250-162-34.ap-northeast-1.compute.amazonaws.com"
+		p:port="6379" />
+
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"
+		p:connection-factory-ref="jedisConnectionFactory" />
+
+	<bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"
+		p:connection-factory-ref="jedisConnectionFactory" />
 </beans>
